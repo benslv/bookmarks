@@ -87,8 +87,14 @@ export default function Index() {
 										<Button
 											variant="outline"
 											className="h-6 w-12"
+											asChild
 										>
-											<TrashIcon />
+											<Link
+												replace
+												to={`./${bookmark.id}/delete`}
+											>
+												<TrashIcon />
+											</Link>
 										</Button>
 									</div>
 								</TableCell>

@@ -9,14 +9,16 @@ import {
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import { z } from "zod";
 
-import { Button } from "~/components/ui/button";
 import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-} from "~/components/ui/dialog";
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
+import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { prisma } from "~/prisma.server";
@@ -91,11 +93,11 @@ export default function Page() {
 	});
 
 	return (
-		<Dialog open>
-			<DialogContent>
-				<DialogHeader>
-					<DialogTitle>Edit</DialogTitle>
-				</DialogHeader>
+		<AlertDialog open>
+			<AlertDialogContent>
+				<AlertDialogHeader>
+					<AlertDialogTitle>Edit</AlertDialogTitle>
+				</AlertDialogHeader>
 
 				<Form
 					method="post"
@@ -138,18 +140,21 @@ export default function Page() {
 							{fields.description.errors}
 						</div>
 					</fieldset>
-					<div className="mt-4 flex gap-x-2 justify-end">
-						<DialogClose asChild>
-							<Button variant="ghost" asChild>
-								<Link to=".." replace>
-									Close
-								</Link>
-							</Button>
-						</DialogClose>
-						<Button type="submit">Save</Button>
-					</div>
+					<div className="mt-4 flex gap-x-2 justify-end"></div>
 				</Form>
-			</DialogContent>
-		</Dialog>
+				<AlertDialogFooter>
+					<AlertDialogCancel asChild>
+						<Button variant="ghost" asChild>
+							<Link to=".." replace>
+								Close
+							</Link>
+						</Button>
+					</AlertDialogCancel>
+					<AlertDialogAction type="submit" form={form.id}>
+						Save
+					</AlertDialogAction>
+				</AlertDialogFooter>
+			</AlertDialogContent>
+		</AlertDialog>
 	);
 }
