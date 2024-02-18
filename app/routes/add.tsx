@@ -36,7 +36,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		},
 	});
 
-	return redirect("/");
+	return redirect("/bookmarks");
 }
 
 export default function Page() {
@@ -54,15 +54,13 @@ export default function Page() {
 		<div className="p-4">
 			<h1 className="text-3xl font-extrabold">Add New Bookmark</h1>
 			<Form method="post" id={form.id} onSubmit={form.onSubmit}>
-				<Label htmlFor="url">
-					Site
-					<Input
-						type="text"
-						name={fields.url.name}
-						placeholder="www.example.com"
-					/>
-					<div className="text-red-700">{fields.url.errors}</div>
-				</Label>
+				<Label htmlFor={fields.url.name}>Site</Label>
+				<Input
+					type="text"
+					name={fields.url.name}
+					placeholder="www.example.com"
+				/>
+				<div className="text-red-700">{fields.url.errors}</div>
 				<Button type="submit">Add</Button>
 			</Form>
 		</div>
