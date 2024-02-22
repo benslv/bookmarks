@@ -26,7 +26,6 @@ import { prisma } from "~/prisma.server";
 const bookmarkSchema = z.object({
 	url: z.string(),
 	title: z.string().optional(),
-	description: z.string().optional(),
 });
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -66,14 +65,13 @@ export async function action({ params, request }: ActionFunctionArgs) {
 		return json(submission.reply());
 	}
 
-	const { title, url, description } = submission.value;
+	const { title, url } = submission.value;
 
 	await prisma.bookmark.update({
 		where: { id },
 		data: {
 			title,
 			url,
-			description,
 		},
 	});
 
@@ -103,7 +101,7 @@ export default function Page() {
 					method="post"
 					id={form.id}
 					onSubmit={form.onSubmit}
-					className="flex flex-col gap-y-2"
+					className="flex flex-col gap-y-2 mb-4"
 				>
 					<fieldset>
 						<Label htmlFor={fields.url.name}>URL</Label>
@@ -127,20 +125,6 @@ export default function Page() {
 							{fields.title.errors}
 						</div>
 					</fieldset>
-					<fieldset>
-						<Label htmlFor={fields.description.name}>
-							Description
-						</Label>
-						<Input
-							type="text"
-							name={fields.description.name}
-							defaultValue={bookmark.description}
-						/>
-						<div className="text-red-700 text-sm">
-							{fields.description.errors}
-						</div>
-					</fieldset>
-					<div className="mt-4 flex gap-x-2 justify-end"></div>
 				</Form>
 				<AlertDialogFooter>
 					<AlertDialogCancel asChild>

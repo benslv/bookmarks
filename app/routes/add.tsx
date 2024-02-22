@@ -17,6 +17,7 @@ const schema = z.object({
 });
 
 export async function action({ request }: ActionFunctionArgs) {
+	console.log("hello!");
 	const formData = await request.formData();
 	const submission = parseWithZod(formData, { schema });
 
@@ -26,13 +27,16 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const { url } = submission.value;
 
-	const { title = "", description = "" } = await getOGTags(url);
+	console.log(url);
+
+	const { title = "" } = await getOGTags(url);
 
 	await prisma.bookmark.create({
 		data: {
 			url,
 			title,
-			description,
+			addedAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
 		},
 	});
 
