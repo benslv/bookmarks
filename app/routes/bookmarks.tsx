@@ -1,17 +1,9 @@
-import { TrashIcon } from "@heroicons/react/24/outline";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
-import { Button } from "~/components/ui/button";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "~/components/ui/table";
 
 import { prisma } from "~/prisma.server";
+
+const dtf = new Intl.DateTimeFormat("en");
 
 export const meta: MetaFunction = () => {
 	return [
@@ -21,7 +13,11 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-	const bookmarks = await prisma.bookmark.findMany();
+	const bookmarks = await prisma.bookmark.findMany({
+		orderBy: {
+			addedAt: "desc",
+		},
+	});
 
 	return { bookmarks };
 }
@@ -30,80 +26,30 @@ export default function Index() {
 	const { bookmarks } = useLoaderData<typeof loader>();
 
 	return (
-		<>
-			<Table>
-				<TableHeader>
-					<TableRow>
-						<TableHead className="w-8"></TableHead>
-						<TableHead>Title</TableHead>
-						<TableHead>Link</TableHead>
-						<TableHead className="w-8"></TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{bookmarks.map((bookmark, i) => {
-						const faviconUrl = `https://www.google.com/s2/favicons?domain=${bookmark.url}&sz=16`;
-						return (
-							<TableRow key={i} className="group">
-								<TableCell>
-									<img
-										src={faviconUrl}
-										width={16}
-										height={16}
-									/>
-								</TableCell>
-								<TableCell>
-									<a
-										href={bookmark.url}
-										target="_blank"
-										className="font-semibold"
-									>
-										{bookmark.title || bookmark.url}
-									</a>
-								</TableCell>
-								<TableCell>
-									<a
-										href={bookmark.url}
-										target="_blank"
-										className="text-gray-600"
-									>
-										{new URL(bookmark.url).hostname}
-									</a>
-								</TableCell>
-								<TableCell className="ml-auto group-hover:opacity-100 opacity-0">
-									<div className="flex gap-x-2">
-										<Button
-											variant="outline"
-											className="h-6"
-											asChild
-										>
-											<Link
-												replace
-												to={`./${bookmark.id}/edit`}
-											>
-												Edit
-											</Link>
-										</Button>
-										<Button
-											variant="outline"
-											className="h-6 w-12"
-											asChild
-										>
-											<Link
-												replace
-												to={`./${bookmark.id}/delete`}
-											>
-												<TrashIcon />
-											</Link>
-										</Button>
-									</div>
-								</TableCell>
-							</TableRow>
-						);
-					})}
-				</TableBody>
-			</Table>
+		<div className="flex flex-col w-full p-2">
+			{bookmarks.map((bookmark) => {
+				return (
+					<Link
+						to={bookmark.url}
+						key={bookmark.id}
+						className="flex gap-x-4 items-center p-2 rounded-md transition-colors hover:bg-gray-100"
+					>
+						<img
+							src={`https://www.google.com/s2/favicons?domain=${bookmark.url}&sz=40`}
+							width={40}
+							height={40}
+						/>
+						<div>
+							<h1 className="font-semibold">{bookmark.title}</h1>
+							<p className="text-gray-500 text-sm">
+								{new URL(bookmark.url).hostname}
+							</p>
+						</div>
+					</Link>
+				);
+			})}
+
 			<Outlet />
-		</>
+		</div>
 	);
 }

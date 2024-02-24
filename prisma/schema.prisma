@@ -13,4 +13,5 @@ model Bookmark {
   title     String
   addedAt   DateTime
   updatedAt DateTime
+  imageUrl  String
 }

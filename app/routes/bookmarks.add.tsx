@@ -1,12 +1,11 @@
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useNavigate } from "@remix-run/react";
 import { z } from "zod";
 
-import { Button } from "~/components/ui/button";
+import { Dialog, DialogContent } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import { getOGTags } from "~/lib/utils.server";
 import { prisma } from "~/prisma.server";
 
@@ -29,12 +28,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	console.log(url);
 
-	const { title = "" } = await getOGTags(url);
+	const { title = "", imageUrl = "" } = await getOGTags(url);
 
 	await prisma.bookmark.create({
 		data: {
 			url,
 			title,
+			imageUrl,
 			addedAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString(),
 		},
@@ -45,6 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Page() {
 	const lastResult = useActionData<typeof action>();
+	const navigate = useNavigate();
 
 	const [form, fields] = useForm({
 		lastResult,
@@ -55,18 +56,19 @@ export default function Page() {
 	});
 
 	return (
-		<div className="p-4">
-			<h1 className="text-3xl font-extrabold">Add New Bookmark</h1>
-			<Form method="post" id={form.id} onSubmit={form.onSubmit}>
-				<Label htmlFor={fields.url.name}>Site</Label>
-				<Input
-					type="text"
-					name={fields.url.name}
-					placeholder="www.example.com"
-				/>
-				<div className="text-red-700">{fields.url.errors}</div>
-				<Button type="submit">Add</Button>
-			</Form>
-		</div>
+		<Dialog defaultOpen>
+			<DialogContent
+				onEscapeKeyDown={() => navigate("..")}
+				onInteractOutside={() => navigate("..")}
+			>
+				<Form method="post">
+					<Input
+						type="text"
+						name={fields.url.name}
+						placeholder="Paste the link here..."
+					/>
+				</Form>
+			</DialogContent>
+		</Dialog>
 	);
 }

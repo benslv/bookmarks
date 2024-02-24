@@ -41,7 +41,7 @@ export default function App() {
 					<div className="w-64 min-w-64 h-screen bg-gray-100 border-r border-gray-200 flex flex-col p-4 gap-y-4">
 						<h1 className="font-bold">Bookmarks</h1>
 						<Link to="/bookmarks">Bookmarks</Link>
-						<Link to="/add">Add</Link>
+						<Link to="/bookmarks/add">Add</Link>
 					</div>
 					<Outlet />
 				</div>

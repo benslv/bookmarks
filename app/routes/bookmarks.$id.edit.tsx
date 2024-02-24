@@ -91,7 +91,7 @@ export default function Page() {
 	});
 
 	return (
-		<AlertDialog open>
+		<AlertDialog defaultOpen>
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>Edit</AlertDialogTitle>

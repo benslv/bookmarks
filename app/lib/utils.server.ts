@@ -2,7 +2,7 @@ import ogs from "open-graph-scraper";
 
 export async function getOGTags(
 	url: string
-): Promise<{ title?: string; image?: string }> {
+): Promise<{ title?: string; imageUrl?: string }> {
 	const data = await ogs({ url });
 
 	if (data.error) {
@@ -14,7 +14,7 @@ export async function getOGTags(
 			data.result.ogTitle ??
 			data.result.dcTitle ??
 			data.result.twitterTitle,
-		image:
+		imageUrl:
 			data.result.ogImage?.[0].url ?? data.result.twitterImage?.[0].url,
 	};
 }
