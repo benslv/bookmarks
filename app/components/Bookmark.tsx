@@ -15,7 +15,12 @@ export function Bookmark({ bookmark }: { bookmark: Bookmark }) {
 				alt=""
 				className="inline mr-2 self-center"
 			/>
-			<Link to={bookmark.url} className="hover:underline">
+			<Link
+				to={bookmark.url}
+				target="_blank"
+				rel="noreferrer"
+				className="hover:underline"
+			>
 				{bookmark.title || bookmark.url}
 			</Link>
 			<span className="text-stone-500 text-sm ml-2">
