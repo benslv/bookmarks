@@ -7,9 +7,15 @@ import { fetchMetadata } from "~/utils/fetchMetadata.server";
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 
-	const { url } = z
-		.object({ url: z.string() })
-		.parse(Object.fromEntries(formData.entries()));
+	const parseResult = z
+		.object({ url: z.string().url() })
+		.safeParse(Object.fromEntries(formData.entries()));
+
+	if (!parseResult.success) {
+		return null;
+	}
+
+	const { url } = parseResult.data;
 
 	const { title } = await fetchMetadata(url);
 
