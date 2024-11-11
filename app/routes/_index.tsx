@@ -22,7 +22,7 @@ export async function loader() {
 	const bookmarks = await db
 		.select()
 		.from(bookmarksTable)
-		.where(eq(bookmarksTable.status, "unread"))
+		.where(eq(bookmarksTable.folder, "unread"))
 		.orderBy(desc(bookmarksTable.dateAdded));
 
 	return { bookmarks };
@@ -60,7 +60,7 @@ export default function Index() {
 					autoCapitalize="off"
 					required
 					placeholder="https://interesting-article.com"
-					className="min-w-0 w-full border bg-white p-2 rounded shadow placeholder-stone-300 h-10 outline-offset-1 focus-within:outline-orange-400 dark:bg-stone-700 dark:border-stone-700 dark:placeholder-stone-500"
+					className="min-w-0 w-full border bg-white p- px-3 rounded-lg shadow placeholder-stone-300 h-10 outline-offset-1 focus-within:outline-orange-400 dark:bg-stone-700 dark:border-stone-700 dark:placeholder-stone-500"
 				/>
 			</fetcher.Form>
 

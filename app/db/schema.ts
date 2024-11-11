@@ -9,8 +9,10 @@ export const bookmarksTable = sqliteTable("bookmarks_table", {
 	dateAdded: int({ mode: "timestamp" })
 		.$defaultFn(() => new Date())
 		.notNull(),
-	status: text({ enum: ["unread", "read"] })
-		.default("unread")
+	folder: text().default("unread").notNull(),
+	tags: text({ mode: "json" })
+		.$type<{ data: string[] }>()
+		.default({ data: [] })
 		.notNull(),
 });
 

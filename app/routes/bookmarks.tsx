@@ -41,7 +41,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 			const bookmark = await db
 				.update(bookmarksTable)
-				.set({ status: "read" })
+				.set({ folder: "read" })
 				.where(eq(bookmarksTable.id, id));
 
 			return json({ bookmark });
