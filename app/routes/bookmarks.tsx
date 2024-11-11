@@ -50,3 +50,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	return null;
 }
+
+export async function loader() {
+	const bookmarks = await db.select().from(bookmarksTable);
+	return { bookmarks };
+}

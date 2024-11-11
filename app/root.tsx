@@ -24,7 +24,7 @@ export const links: LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en" className="bg-stone-50 min-h-svh">
+		<html lang="en" className="min-h-svh">
 			<head>
 				<meta charSet="utf-8" />
 				<meta
@@ -34,7 +34,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Meta />
 				<Links />
 			</head>
-			<body className="bg-inherit text-stone-900 h-full pt-6 pb-4">
+			<body className="text-stone-900 dark:text-white h-full pt-6 pb-4">
 				{children}
 				<ScrollRestoration />
 				<Scripts />

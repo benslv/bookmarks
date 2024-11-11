@@ -60,7 +60,7 @@ export default function Index() {
 					autoCapitalize="off"
 					required
 					placeholder="https://interesting-article.com"
-					className="min-w-0 w-full border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-2 rounded shadow placeholder-stone-300 h-10 outline-offset-1 focus-within:outline-orange-400"
+					className="min-w-0 w-full border bg-white p-2 rounded shadow placeholder-stone-300 h-10 outline-offset-1 focus-within:outline-orange-400 dark:bg-stone-700 dark:border-stone-700 dark:placeholder-stone-500"
 				/>
 			</fetcher.Form>
 
