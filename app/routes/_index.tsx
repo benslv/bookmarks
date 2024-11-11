@@ -1,8 +1,10 @@
 import { type MetaFunction } from "@remix-run/node";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 import { desc } from "drizzle-orm";
+import { eq } from "drizzle-orm/sql";
 import { useEffect, useRef } from "react";
 import { Bookmark } from "~/components/Bookmark";
+import { Spinner } from "~/components/Spinner";
 import db from "~/db";
 import { bookmarksTable } from "~/db/schema";
 
@@ -20,6 +22,7 @@ export async function loader() {
 	const bookmarks = await db
 		.select()
 		.from(bookmarksTable)
+		.where(eq(bookmarksTable.status, "unread"))
 		.orderBy(desc(bookmarksTable.dateAdded));
 
 	return { bookmarks };
@@ -57,17 +60,20 @@ export default function Index() {
 					autoCapitalize="off"
 					required
 					placeholder="https://interesting-article.com"
-					className="bg-inherit min-w-0 w-full border p-1 rounded-tl rounded-bl border-r-0"
+					className="bg-white min-w-0 w-full border p-1 px-2 rounded shadow placeholder-stone-400 h-8"
 				/>
-				<button
-					type="submit"
-					className="bg-orange-300 text-orange-50 hover:bg-orange-400 px-2 rounded-tr rounded-br"
-				>
-					+
-				</button>
 			</fetcher.Form>
 
 			<div className="flex flex-col gap-y-1">
+				{isAdding && (
+					<div className="flex items-center gap-x-2">
+						<Spinner />
+						<p className="inline text-stone-400 font-normal animate-pulse">
+							Adding{" "}
+							{fetcher.formData?.get("url")?.toString() ?? "link"}
+						</p>
+					</div>
+				)}
 				{bookmarks.map((bookmark) => (
 					<Bookmark key={bookmark.id} bookmark={bookmark} />
 				))}
