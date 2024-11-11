@@ -4,7 +4,13 @@ import { eq } from "drizzle-orm/sql";
 import { z } from "zod";
 import db from "~/db";
 import { bookmarksTable } from "~/db/schema";
-import { fetchMetadata } from "~/utils/fetchMetadata.server";
+import { fetchTitle } from "~/utils/fetchMetadata.server";
+
+const createBookmarkPayload = z.object({
+	url: z.string().url(),
+	title: z.string().optional(),
+	dateAdded: z.coerce.date().optional(),
+});
 
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
@@ -13,19 +19,24 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	switch (intent) {
 		case "create": {
-			const parseResult = z.string().url().safeParse(formData.get("url"));
+			const parseResult = createBookmarkPayload.safeParse({
+				url: formData.get("url"),
+				title: formData.get("title"),
+				dateAdded: formData.get("dateAdded"),
+			});
 
 			if (!parseResult.success) {
+				console.log(parseResult.error);
 				return null;
 			}
 
-			const url = parseResult.data;
+			const { url, dateAdded } = parseResult.data;
 
-			const { title } = await fetchMetadata(url);
+			const title = parseResult.data.title ?? (await fetchTitle(url));
 
 			const bookmark = await db
 				.insert(bookmarksTable)
-				.values({ url, title });
+				.values({ url, title, dateAdded });
 
 			return json({ bookmark });
 		}
