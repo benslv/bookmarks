@@ -44,7 +44,7 @@ export default function Index() {
 	}, [isAdding]);
 
 	return (
-		<div className="max-w-3xl mx-auto px-4 flex flex-col gap-y-4 my-4">
+		<div className="max-w-3xl mx-auto px-4 flex flex-col gap-y-4">
 			<fetcher.Form
 				ref={formRef}
 				className="flex"
@@ -60,7 +60,7 @@ export default function Index() {
 					autoCapitalize="off"
 					required
 					placeholder="https://interesting-article.com"
-					className="bg-white min-w-0 w-full border p-1 px-2 rounded shadow placeholder-stone-400 h-8"
+					className="min-w-0 w-full border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-2 rounded shadow placeholder-stone-300 h-10 outline-offset-1 focus-within:outline-orange-400"
 				/>
 			</fetcher.Form>
 
