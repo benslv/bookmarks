@@ -3,14 +3,8 @@ import { eq } from "drizzle-orm/sql";
 
 import { z } from "zod";
 import db from "~/db";
-import { bookmarksTable } from "~/db/schema";
+import { bookmarksTable, insertBookmarkSchema } from "~/db/schema";
 import { fetchTitle } from "~/utils/fetchMetadata.server";
-
-const createBookmarkPayload = z.object({
-	url: z.string().url(),
-	title: z.string().optional(),
-	dateAdded: z.coerce.date().optional(),
-});
 
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
@@ -19,10 +13,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	switch (intent) {
 		case "create": {
-			const parseResult = createBookmarkPayload.safeParse({
+			const parseResult = insertBookmarkSchema.safeParse({
 				url: formData.get("url"),
 				title: formData.get("title"),
-				dateAdded: formData.get("dateAdded"),
+				dateAdded:
+					formData.get("dateAdded") &&
+					new Date(String(formData.get("dateAdded"))),
+				folder: formData.get("folder"),
 			});
 
 			if (!parseResult.success) {
@@ -30,13 +27,13 @@ export async function action({ request }: ActionFunctionArgs) {
 				return null;
 			}
 
-			const { url, dateAdded } = parseResult.data;
+			const { url, dateAdded, folder } = parseResult.data;
 
 			const title = parseResult.data.title ?? (await fetchTitle(url));
 
 			const bookmark = await db
 				.insert(bookmarksTable)
-				.values({ url, title, dateAdded });
+				.values({ url, title, dateAdded, folder });
 
 			return json({ bookmark });
 		}
@@ -52,7 +49,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 			const bookmark = await db
 				.update(bookmarksTable)
-				.set({ folder: "read" })
+				.set({ folder: "archive" })
 				.where(eq(bookmarksTable.id, id));
 
 			return json({ bookmark });

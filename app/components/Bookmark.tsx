@@ -12,12 +12,12 @@ export function Bookmark({ bookmark }: { bookmark: Bookmark }) {
 	return (
 		<div className="flex items-center gap-x-2">
 			<img width={16} height={16} src={faviconSrc} alt="" />
-			<div>
+			<div className="w-full">
 				<Link
 					to={bookmark.url}
 					target="_blank"
 					rel="noreferrer"
-					className="hover:underline"
+					className="hover:underline hyphens-auto line-clamp-2"
 				>
 					{bookmark.title || bookmark.url}
 				</Link>
@@ -34,14 +34,29 @@ export function Bookmark({ bookmark }: { bookmark: Bookmark }) {
 					>
 						{hostname}
 					</Link>
-					<span>・</span>
-					<fetcher.Form method="POST" action="/bookmarks">
-						<input type="hidden" name="intent" value="delete" />
-						<input type="hidden" name="id" value={bookmark.id} />
-						<button type="submit" className="hover:underline">
-							mark read
-						</button>
-					</fetcher.Form>
+					{bookmark.folder === "unread" && (
+						<>
+							<span>・</span>
+							<fetcher.Form method="POST" action="/bookmarks">
+								<input
+									type="hidden"
+									name="intent"
+									value="delete"
+								/>
+								<input
+									type="hidden"
+									name="id"
+									value={bookmark.id}
+								/>
+								<button
+									type="submit"
+									className="hover:underline"
+								>
+									mark read
+								</button>
+							</fetcher.Form>
+						</>
+					)}
 				</div>
 			</div>
 		</div>

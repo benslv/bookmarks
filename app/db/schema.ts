@@ -10,10 +10,7 @@ export const bookmarksTable = sqliteTable("bookmarks_table", {
 		.$defaultFn(() => new Date())
 		.notNull(),
 	folder: text().default("unread").notNull(),
-	tags: text({ mode: "json" })
-		.$type<{ data: string[] }>()
-		.default({ data: [] })
-		.notNull(),
+	tags: text({ mode: "json" }).$type<string[]>().default([]).notNull(),
 });
 
 export const insertBookmarkSchema = createInsertSchema(bookmarksTable);
