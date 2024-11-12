@@ -1,5 +1,5 @@
 import { type MetaFunction } from "@remix-run/node";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
 import { desc } from "drizzle-orm";
 import { eq } from "drizzle-orm/sql";
 import { useEffect, useRef } from "react";
@@ -31,6 +31,13 @@ export async function loader() {
 export default function Index() {
 	const formRef = useRef<HTMLFormElement>(null);
 	const { bookmarks } = useLoaderData<typeof loader>();
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	const searchQuery = searchParams.get("q") ?? "";
+
+	const filtered = bookmarks.filter((bookmark) =>
+		bookmark.title.toLowerCase().includes(searchQuery.toLowerCase())
+	);
 
 	const fetcher = useFetcher();
 	const isAdding =
@@ -45,24 +52,27 @@ export default function Index() {
 
 	return (
 		<div className="max-w-3xl mx-auto px-4 flex flex-col gap-y-4">
-			<fetcher.Form
-				ref={formRef}
-				className="flex"
-				method="POST"
-				action="/bookmarks"
-			>
-				<input type="hidden" name="intent" value="create" />
-				<input
-					type="text"
-					name="url"
-					autoComplete="off"
-					autoCorrect="off"
-					autoCapitalize="off"
-					required
-					placeholder="https://interesting-article.com"
-					className="min-w-0 w-full border bg-white p- px-3 rounded-lg shadow placeholder-stone-300 h-10 outline-offset-1 focus-within:outline-orange-400 dark:bg-stone-700 dark:border-stone-700 dark:placeholder-stone-500"
-				/>
-			</fetcher.Form>
+			<input
+				type="text"
+				name="url"
+				autoComplete="off"
+				autoCorrect="off"
+				autoCapitalize="off"
+				placeholder="Search"
+				defaultValue={searchQuery}
+				className="min-w-0 w-full border bg-white p- px-3 rounded-lg shadow placeholder-stone-300 h-10 outline-offset-1 focus-within:outline-orange-400 dark:bg-stone-700 dark:border-stone-700 dark:placeholder-stone-500"
+				onChange={(event) => {
+					setSearchParams((prev) => {
+						if (event.target.value.length === 0) {
+							prev.delete("q");
+						} else {
+							prev.set("q", event.target.value);
+						}
+
+						return prev;
+					});
+				}}
+			/>
 
 			<div className="flex flex-col gap-y-1">
 				{isAdding && (
@@ -74,7 +84,7 @@ export default function Index() {
 						</p>
 					</div>
 				)}
-				{bookmarks.map((bookmark) => (
+				{filtered.map((bookmark) => (
 					<Bookmark key={bookmark.id} bookmark={bookmark} />
 				))}
 			</div>
