@@ -1,5 +1,6 @@
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { eq } from "drizzle-orm/sql";
+
 import * as v from "valibot";
 import { z } from "zod";
 
@@ -72,7 +73,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
 			return json({ bookmark });
 		}
+		default: {
+			return null;
+		}
 	}
-
-	return null;
 }
