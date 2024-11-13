@@ -25,7 +25,6 @@ export async function action({ request }: ActionFunctionArgs) {
 			});
 
 			if (!parseResult.success) {
-				console.log(parseResult.error);
 				return null;
 			}
 
