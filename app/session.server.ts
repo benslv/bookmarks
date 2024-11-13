@@ -5,7 +5,7 @@ const { getSession, commitSession, destroySession } =
 	createCookieSessionStorage({
 		cookie: {
 			name: "__session",
-			maxAge: 60,
+			maxAge: 60 * 60 * 24,
 			path: "/",
 			sameSite: "lax",
 			secrets: [env.SESSION_SECRET],
