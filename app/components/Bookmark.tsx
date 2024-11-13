@@ -9,8 +9,15 @@ export function Bookmark({ bookmark }: { bookmark: Bookmark }) {
 
 	const fetcher = useFetcher();
 
+	const isDeleting =
+		fetcher.state !== "idle" &&
+		fetcher.formData?.get("intent") === "delete";
+
 	return (
-		<div className="flex items-center gap-x-2">
+		<div
+			style={{ opacity: isDeleting ? 0.5 : 1 }}
+			className="flex items-center gap-x-2"
+		>
 			<img
 				width={16}
 				height={16}
@@ -57,8 +64,11 @@ export function Bookmark({ bookmark }: { bookmark: Bookmark }) {
 								<button
 									type="submit"
 									className="hover:underline"
+									disabled={isDeleting}
 								>
-									mark read
+									{isDeleting
+										? "marking as read"
+										: "mark read"}
 								</button>
 							</fetcher.Form>
 						</>
