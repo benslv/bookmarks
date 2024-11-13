@@ -1,17 +1,34 @@
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { eq } from "drizzle-orm/sql";
-
+import * as v from "valibot";
 import { z } from "zod";
+
 import db from "~/db";
 import { bookmarksTable, insertBookmarkSchema } from "~/db/schema";
+import { getSession } from "~/session.server";
 import { fetchTitle } from "~/utils/fetchMetadata.server";
-import { requireAuth } from "~/utils/requireAuth.server";
+import { validateToken } from "~/utils/validateToken.server";
 
 export async function action({ request }: ActionFunctionArgs) {
-	await requireAuth(request);
-
 	const formData = await request.formData();
-	const intent = formData.get("intent");
+	const session = await getSession(request.headers.get("Cookie"));
+
+	const rawToken = session.get("token") ?? formData.get("token");
+
+	const token = v.parse(v.string(), rawToken);
+
+	if (!token) {
+		return json({ error: "Missing auth token." }, 400);
+	}
+
+	if (!validateToken(token)) {
+		return json({ error: "Invalid auth token." }, 401);
+	}
+
+	const intent = v.parse(
+		v.picklist(["create", "delete"]),
+		formData.get("intent")
+	);
 
 	switch (intent) {
 		case "create": {
