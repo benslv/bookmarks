@@ -11,7 +11,13 @@ export function Bookmark({ bookmark }: { bookmark: Bookmark }) {
 
 	return (
 		<div className="flex items-center gap-x-2">
-			<img width={16} height={16} src={faviconSrc} alt="" />
+			<img
+				width={16}
+				height={16}
+				src={faviconSrc}
+				alt=""
+				loading="lazy"
+			/>
 			<div className="w-full">
 				<Link
 					to={bookmark.url}
