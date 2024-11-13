@@ -5,10 +5,12 @@ import { z } from "zod";
 import db from "~/db";
 import { bookmarksTable, insertBookmarkSchema } from "~/db/schema";
 import { fetchTitle } from "~/utils/fetchMetadata.server";
+import { requireAuth } from "~/utils/requireAuth.server";
 
 export async function action({ request }: ActionFunctionArgs) {
-	const formData = await request.formData();
+	await requireAuth(request);
 
+	const formData = await request.formData();
 	const intent = formData.get("intent");
 
 	switch (intent) {
@@ -57,9 +59,4 @@ export async function action({ request }: ActionFunctionArgs) {
 	}
 
 	return null;
-}
-
-export async function loader() {
-	const bookmarks = await db.select().from(bookmarksTable);
-	return { bookmarks };
 }

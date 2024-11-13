@@ -1,11 +1,15 @@
+import { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { desc, eq } from "drizzle-orm";
 
 import { Bookmark } from "~/components/Bookmark";
 import db from "~/db";
 import { bookmarksTable } from "~/db/schema";
+import { requireAuth } from "~/utils/requireAuth.server";
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
+	await requireAuth(request);
+
 	const bookmarks = await db
 		.select()
 		.from(bookmarksTable)

@@ -1,12 +1,14 @@
-import { type MetaFunction } from "@remix-run/node";
+import { LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
 import { useFetcher, useLoaderData, useSearchParams } from "@remix-run/react";
 import { desc } from "drizzle-orm";
 import { eq } from "drizzle-orm/sql";
 import { useEffect, useRef } from "react";
+
 import { Bookmark } from "~/components/Bookmark";
 import { Spinner } from "~/components/Spinner";
 import db from "~/db";
 import { bookmarksTable } from "~/db/schema";
+import { requireAuth } from "~/utils/requireAuth.server";
 
 export const meta: MetaFunction = () => {
 	return [
@@ -18,7 +20,9 @@ export const meta: MetaFunction = () => {
 	];
 };
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
+	await requireAuth(request);
+
 	const bookmarks = await db
 		.select()
 		.from(bookmarksTable)
