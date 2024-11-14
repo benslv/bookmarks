@@ -1,15 +1,23 @@
 import { json, type ActionFunctionArgs } from "@remix-run/node";
 import { z } from "zod";
 import db from "~/db";
-import { bookmarksTable, insertBookmarkSchema } from "~/db/schema";
+import { bookmarksTable } from "~/db/schema";
 import { fetchTitle } from "~/utils/fetchMetadata.server";
 
 import { validateToken } from "~/utils/validateToken.server";
 
+const tokenSchema = z.string().min(1);
+
+const createBookmarkSchema = z.object({
+	url: z.string().url(),
+	title: z.string().optional(),
+	dateAdded: z.coerce.date().optional(),
+	folder: z.string().optional(),
+	tags: z.array(z.string()).optional(),
+});
+
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
-
-	const tokenSchema = z.string().min(1);
 
 	const token = tokenSchema.safeParse(formData.get("token"));
 
@@ -21,12 +29,9 @@ export async function action({ request }: ActionFunctionArgs) {
 		return json({ message: "Invalid auth token." }, 401);
 	}
 
-	const parseResult = insertBookmarkSchema.safeParse({
-		url: formData.get("url"),
-		title: formData.get("title"),
-		dateAdded: formData.get("dateAdded"),
-		folder: formData.get("folder"),
-	});
+	const payload = Object.fromEntries(formData.entries());
+
+	const parseResult = createBookmarkSchema.safeParse(payload);
 
 	if (!parseResult.success) {
 		console.error("Parse issue:", parseResult.error);
