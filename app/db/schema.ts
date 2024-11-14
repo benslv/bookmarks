@@ -14,6 +14,7 @@ export const bookmarksTable = sqliteTable("bookmarks_table", {
 });
 
 export const insertBookmarkSchema = createInsertSchema(bookmarksTable).extend({
+	url: z.string().url(),
 	dateAdded: z.coerce.date(),
 });
 
