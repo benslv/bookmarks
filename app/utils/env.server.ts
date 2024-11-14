@@ -1,6 +1,10 @@
 import * as v from "valibot";
 
 const envSchema = v.object({
+	DEV_DATABASE_URL: v.pipe(
+		v.string(),
+		v.nonEmpty("Dev Database connection URL hasn't been supplied in .env")
+	),
 	DATABASE_URL: v.pipe(
 		v.string(),
 		v.nonEmpty("Database connection URL hasn't been supplied in .env")
