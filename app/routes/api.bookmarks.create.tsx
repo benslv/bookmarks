@@ -14,22 +14,23 @@ export async function action({ request }: ActionFunctionArgs) {
 	const token = tokenSchema.safeParse(formData.get("token"));
 
 	if (!token.success) {
-		return json({ error: "Missing auth token." }, 400);
+		return json({ message: "Missing auth token." }, 400);
 	}
 
 	if (!validateToken(token.data)) {
-		return json({ error: "Invalid auth token." }, 401);
+		return json({ message: "Invalid auth token." }, 401);
 	}
 
 	const parseResult = insertBookmarkSchema.safeParse({
 		url: formData.get("url"),
 		title: formData.get("title"),
-		dateAdded: new Date(String(formData.get("dateAdded"))),
+		dateAdded: formData.get("dateAdded"),
 		folder: formData.get("folder"),
 	});
 
 	if (!parseResult.success) {
-		return null;
+		console.error("Parse issue:", parseResult.error);
+		return json({ message: "Issue parsing payload." }, 400);
 	}
 
 	const { url, dateAdded, folder } = parseResult.data;

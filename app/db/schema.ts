@@ -13,7 +13,9 @@ export const bookmarksTable = sqliteTable("bookmarks_table", {
 	tags: text({ mode: "json" }).$type<string[]>().default([]).notNull(),
 });
 
-export const insertBookmarkSchema = createInsertSchema(bookmarksTable);
+export const insertBookmarkSchema = createInsertSchema(bookmarksTable).extend({
+	dateAdded: z.coerce.date(),
+});
 
 export const selectBookmarkSchema = createSelectSchema(bookmarksTable);
 
