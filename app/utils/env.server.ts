@@ -3,7 +3,8 @@ import { z } from "zod";
 const envSchema = z.object({
 	DEV_DATABASE_URL: z
 		.string()
-		.min(1, "Dev Database connection URL hasn't been supplied in .env"),
+		.min(1, "Dev Database connection URL hasn't been supplied in .env")
+		.optional(),
 	DATABASE_URL: z
 		.string()
 		.min(1, "Database connection URL hasn't been supplied in .env"),

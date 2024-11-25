@@ -15,7 +15,11 @@ function getDatabase() {
 	} else {
 		console.log("Using local database.");
 
-		return drizzle("file:local.db");
+		if (!env.DEV_DATABASE_URL) {
+			throw new Error("DEV_DATABASE_URL is not defined in .env");
+		}
+
+		return drizzle(env.DEV_DATABASE_URL);
 	}
 }
 
