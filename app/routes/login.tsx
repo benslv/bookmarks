@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { Form, json, redirect, useActionData } from "@remix-run/react";
+import { z } from "zod";
 import { commitSession, getSession } from "~/session.server";
 import { validateToken } from "~/utils/validateToken.server";
 
@@ -10,7 +11,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	if (!token) return null;
 
-	const authorized = validateToken(String(token));
+	const authorized = validateToken(z.string().parse(token));
 
 	if (!authorized) {
 		return json({ error: "Incorrect token." }, 401);

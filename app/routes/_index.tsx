@@ -8,7 +8,7 @@ import { Bookmark } from "~/components/Bookmark";
 import { Spinner } from "~/components/Spinner";
 import db from "~/db";
 import { bookmarksTable } from "~/db/schema";
-import { requireAuth } from "~/utils/requireAuth.server";
+import { authenticateWithSession } from "~/models/auth.server";
 
 export const meta: MetaFunction = () => {
 	return [
@@ -21,7 +21,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-	await requireAuth(request);
+	await authenticateWithSession(request);
 
 	const bookmarks = await db
 		.select()

@@ -9,9 +9,7 @@ export function Bookmark({ bookmark }: { bookmark: Bookmark }) {
 
 	const fetcher = useFetcher();
 
-	const isDeleting =
-		fetcher.state !== "idle" &&
-		fetcher.formData?.get("intent") === "delete";
+	const isDeleting = fetcher.state !== "idle";
 
 	return (
 		<div

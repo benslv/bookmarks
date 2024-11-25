@@ -1,20 +1,14 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { desc, eq } from "drizzle-orm";
 
 import { Bookmark } from "~/components/Bookmark";
-import db from "~/db";
-import { bookmarksTable } from "~/db/schema";
-import { requireAuth } from "~/utils/requireAuth.server";
+import { authenticateWithSession } from "~/models/auth.server";
+import { getBookmarks } from "~/models/bookmarks.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-	await requireAuth(request);
+	await authenticateWithSession(request);
 
-	const bookmarks = await db
-		.select()
-		.from(bookmarksTable)
-		.where(eq(bookmarksTable.folder, "archive"))
-		.orderBy(desc(bookmarksTable.dateAdded));
+	const bookmarks = await getBookmarks("archive");
 
 	return { bookmarks };
 }
